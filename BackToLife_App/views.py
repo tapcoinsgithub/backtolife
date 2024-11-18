@@ -89,7 +89,7 @@ def get_block_groups(request):
     data = {}
     try:
         block_groups = []
-        users_block_groups = BlockGroup.objects.get(user_id=user.token_id)
+        users_block_groups = BlockGroup.objects.filter(user_id=user.token_id)
         print("GOT USER BLOCK GROUPS")
         print(users_block_groups)
         for block_group in users_block_groups:
