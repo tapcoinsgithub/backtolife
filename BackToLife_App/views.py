@@ -97,7 +97,7 @@ def get_block_groups(request):
                 "name": block_group.block_group_name,
                 "token_list": block_group.app_tokens
             }
-            block_groups.append(b_group)
+            block_groups.append(str(b_group))
         data['block_groups'] = block_groups
         data['response'] = "Success"
     except Exception as e:
