@@ -100,7 +100,8 @@ def get_block_groups(request):
             block_groups.append(b_group)
         data['block_groups'] = block_groups
         data['response'] = "Success"
-    except:
+    except Exception as e:
+        print(f"E IS HERE: {e}")
         data['block_groups'] = []
         data['response'] = "Failed to get block groups."
     return Response(data)
