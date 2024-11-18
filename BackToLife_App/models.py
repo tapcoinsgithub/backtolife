@@ -21,6 +21,6 @@ class User(models.Model):
 class BlockGroup(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     block_group_name = models.CharField(max_length=10, null=True)
-    app_tokens = ArrayField(ArrayField(models.CharField(default=""), null=True, blank=True), null=True, blank=True, default=list)
+    app_tokens = ArrayField(ArrayField(models.CharField(max_length=260, default=""), null=True, blank=True), null=True, blank=True, default=list)
     created_at = models.DateTimeField(verbose_name="created at", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="updated at", auto_now=True)
