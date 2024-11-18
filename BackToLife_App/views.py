@@ -130,7 +130,7 @@ def save_block_group(request):
                 array_data = json.loads(app_tokens)
                 print(array_data)
                 print(type(array_data))
-                BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=app_tokens)
+                BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=array_data)
                 print("CREATED BLOCK GROUP")
                 data['response'] = "Success"
             except Exception as e:
