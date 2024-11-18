@@ -1,0 +1,26 @@
+from django.db import models
+from decouple import config
+from django.contrib.postgres.fields import ArrayField
+
+class Token(models.Model):
+    token = models.CharField(max_length=config('TK', cast=int), null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class User(models.Model):
+    username = models.CharField(max_length=config('CHAR', cast=int), unique=True, null=True)
+    token = models.OneToOneField(Token, on_delete=models.CASCADE, primary_key=True, null=False)
+    level = models.IntegerField(verbose_name="user level", null=True, default=1)
+    level_progress = models.IntegerField(verbose_name="user level progress", null=True, default=0)
+    logged_in = models.BooleanField(verbose_name="logged in", default=False)
+    is_active = models.BooleanField(verbose_name="is active", default=False, null=True)
+    last_active_date = models.DateTimeField(verbose_name="last active date", auto_now=True, null=True)
+    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
+    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
+
+class BlockGroup(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    block_group_name = models.CharField(max_length=10, null=True)
+    app_tokens = ArrayField(ArrayField(models.CharField(default=""), null=True, blank=True), null=True, blank=True, default=list)
+    created_at = models.DateTimeField(verbose_name="created at", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="updated at", auto_now=True)
