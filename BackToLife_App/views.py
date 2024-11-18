@@ -116,10 +116,14 @@ def save_block_group(request):
     if block_group_name and app_tokens and token:
         try:
             token1 = Token.objects.get(token=token)
+            print("Got TOKEN")
             user = User.objects.get(token=token1)
+            print("GOT USER")
             BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=app_tokens)
+            print("CREATED BLOCK GROUP")
             data['response'] = "Success"
-        except:
+        except Exception as e:
+            print(f"E HERE: {e}")
             data['response'] = "Something went wrong."
     else:
         data['response'] = "Invalid information."
