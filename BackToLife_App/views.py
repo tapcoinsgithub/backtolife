@@ -6,6 +6,7 @@ from .models import *
 from decouple import config
 import binascii
 import os
+import json
 
 @api_view(['POST'])
 def login_view(request):
@@ -109,22 +110,32 @@ def save_block_group(request):
     app_tokens = request.data['app_tokens']
     print(f"BLOCK GROUP NAME: {block_group_name}")
     print(f"APP TOKENS LIST: {app_tokens}")
+    print(f"APP TOKENS LIST TYPE: {type(app_tokens)}")
     print(f"TOKEN: {token}")
+    token1 = Token.objects.get(token=token)
+    print("Got TOKEN")
+    user = User.objects.get(token=token1)
+    print("GOT USER")
     data = {
         "response": "Success"
     }
     if block_group_name and app_tokens and token:
         try:
-            token1 = Token.objects.get(token=token)
-            print("Got TOKEN")
-            user = User.objects.get(token=token1)
-            print("GOT USER")
             BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=app_tokens)
             print("CREATED BLOCK GROUP")
             data['response'] = "Success"
         except Exception as e:
             print(f"E HERE: {e}")
-            data['response'] = "Something went wrong."
+            try:
+                array_data = json.loads(app_tokens)
+                print(array_data)
+                print(type(array_data))
+                BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=app_tokens)
+                print("CREATED BLOCK GROUP")
+                data['response'] = "Success"
+            except Exception as e:
+                print(f"E IS NOW HERE: {e}")
+                data['response'] = "Something went wrong."
     else:
         data['response'] = "Invalid information."
     return Response(data)
