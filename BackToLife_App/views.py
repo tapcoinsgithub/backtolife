@@ -113,16 +113,16 @@ def save_block_group(request):
     data = {
         "response": "Success"
     }
-    # if block_group_name and app_tokens and token:
-    #     try:
-    #         token1 = Token.objects.get(token=token)
-    #         user = User.objects.get(token=token1)
-    #         BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=app_tokens)
-    #         data['response'] = "Success"
-    #     except:
-    #         data['response'] = "Something went wrong."
-    # else:
-    #     data['response'] = "Invalid information."
+    if block_group_name and app_tokens and token:
+        try:
+            token1 = Token.objects.get(token=token)
+            user = User.objects.get(token=token1)
+            BlockGroup.objects.create(user=user, block_group_name=block_group_name, app_tokens=app_tokens)
+            data['response'] = "Success"
+        except:
+            data['response'] = "Something went wrong."
+    else:
+        data['response'] = "Invalid information."
     return Response(data)
 
 @api_view(['POST'])
