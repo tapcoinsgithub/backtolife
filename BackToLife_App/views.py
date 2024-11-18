@@ -89,7 +89,9 @@ def get_block_groups(request):
     data = {}
     try:
         block_groups = []
-        users_block_groups = BlockGroup.objects.get(user=user)
+        users_block_groups = BlockGroup.objects.get(user_id=user.id)
+        print("GOT USER BLOCK GROUPS")
+        print(users_block_groups)
         for block_group in users_block_groups:
             b_group = {
                 "name": block_group.block_group_name,
