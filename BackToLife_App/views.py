@@ -32,7 +32,9 @@ def login_view(request):
                     newData = {
                         'response': "User already logged in.",
                         'username': "",
-                        'token': ""
+                        'token': "",
+                        'level': 1,
+                        'level_progress': 0
                     }
                     return Response(newData)
                 print("7")
@@ -46,6 +48,8 @@ def login_view(request):
                 token1.save()
                 print("9")
                 data['token'] = token
+                data['level'] = user.level
+                data['level_progress'] = user.level_progress
                 print("THE TOKEN IS BELOW")
                 print(token)
             else:
@@ -57,11 +61,15 @@ def login_view(request):
                         data["response"] = user
                         data['username'] =  "",
                         data['token'] = ""
+                        data['level'] = 1
+                        data['level_progress'] = 0
                         return Response(data)
                     data['response'] = "Registered"
                     data['username'] = user.username
                     token = user.token
                     data['token'] = token.token
+                    data['level'] = user.level
+                    data['level_progress'] = user.level_progress
                     user.logged_in = True
                     user.is_active = True
                     user.save()
@@ -70,14 +78,18 @@ def login_view(request):
                     data = {
                         'response': "Something went wrong registering.",
                         'username': "",
-                        'token': ""
+                        'token': "",
+                        'level': 1,
+                        'level_progress': 0
                     }
     except Exception as e:
         print(e)
         data = {
             'response': "Something went wrong.",
             'username': "",
-            'token': ""
+            'token': "",
+            'level': 1,
+            'level_progress': 0
         }
     return Response(data)
 
