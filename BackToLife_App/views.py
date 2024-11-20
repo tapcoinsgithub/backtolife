@@ -177,3 +177,68 @@ def logout_view(request):
     token.save()
     user.save()
     return Response(data)
+
+@api_view(['POST'])
+def start_block(request):
+    data = {}
+    try:
+        token = request.data['token']
+        time_length = request.data['time_length']
+        token1 = Token.objects.get(token=token)
+        user = User.objects.get(token=token1)
+        Block.objects.create(user=user, time_length=time_length, user_level=user.level)
+        data['result'] = True
+    except Exception as e:
+        print(f"EXCEPTION HERE: {e}")
+        data['result'] = False
+    return Response(data)
+
+@api_view(['POST'])
+def stop_block(request):
+    data = {}
+    try:
+        token = request.data['token']
+        token1 = Token.objects.get(token=token)
+        user = User.objects.get(token=token1)
+        stopping_block = Block.objects.get(user=user, completed=False)
+        stopping_block.delete()
+        data['result'] = True
+    except Exception as e:
+        print(f"EXCEPTION HERE: {e}")
+        data['result'] = False
+    return Response(data)
+
+@api_view(['POST'])
+def block_ended(request):
+    data = {}
+    try:
+        token = request.data['token']
+        token1 = Token.objects.get(token=token)
+        user = User.objects.get(token=token1)
+        ending_block = Block.objects.get(user=user, completed=False)
+        if ending_block.user_level == user.level:
+            ending_block.completed = True
+            current_max_time = user.level * 60
+            total_time_to_progress = current_max_time * 5
+            block_time_length = ending_block.time_length
+            progress_gained = total_time_to_progress/block_time_length
+            percent_gained = 100 / progress_gained
+            user.level_progress += percent_gained
+            if user.level_progress >= 100:
+                user.level += 1
+                user.level_progress = 0
+            user.save()
+            data['result'] = True
+            data['user_level'] = user.level
+            data['user_level_progress'] = user.level_progress
+        else:
+            ending_block.delete()
+            data['result'] = False
+            data['user_level'] = user.level
+            data['user_level_progress'] = user.level_progress
+    except Exception as e:
+        print(f"EXCEPTION HERE: {e}")
+        data['result'] = False
+        data['user_level'] = 0
+        data['user_level_progress'] = 0
+    return Response(data)

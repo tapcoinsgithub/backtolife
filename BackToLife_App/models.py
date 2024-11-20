@@ -24,3 +24,11 @@ class BlockGroup(models.Model):
     app_tokens = ArrayField(ArrayField(models.CharField(max_length=260, default=""), null=True, blank=True), null=True, blank=True, default=list)
     created_at = models.DateTimeField(verbose_name="created at", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="updated at", auto_now=True)
+
+class Block(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    length = models.IntegerField(verbose_name="time length", null=True, default=0)
+    completed = models.BooleanField(verbose_name="completed block", default=False, null=True)
+    user_level = models.IntegerField(verbose_name="users level", null=True, default=1)
+    created_at = models.DateTimeField(verbose_name="created at", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="updated at", auto_now=True)
