@@ -27,7 +27,7 @@ class BlockGroup(models.Model):
 
 class Block(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    length = models.IntegerField(verbose_name="time length", null=True, default=0)
+    time_length = models.IntegerField(verbose_name="time length", null=True, default=0)
     completed = models.BooleanField(verbose_name="completed block", default=False, null=True)
     user_level = models.IntegerField(verbose_name="users level", null=True, default=1)
     created_at = models.DateTimeField(verbose_name="created at", auto_now_add=True)
