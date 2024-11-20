@@ -220,20 +220,24 @@ def block_ended(request):
         user = User.objects.get(token=token1)
         ending_block = Block.objects.get(user=user, completed=False)
         if ending_block.user_level == user.level:
+            print("ENDING USER BLOCK")
             ending_block.completed = True
-            current_max_time = user.level * 60
+            current_max_time = (30 * user.level) * 60
             total_time_to_progress = current_max_time * 5
             block_time_length = ending_block.time_length
             progress_gained = total_time_to_progress/block_time_length
             percent_gained = 100 / progress_gained
             user.level_progress += percent_gained
+            print(f"PERCENT GAINED: {percent_gained}")
             if user.level_progress >= 100:
+                print("PROGRESSING TO NEXT LEVEL")
                 user.level += 1
                 user.level_progress = 0
             user.save()
             data['result'] = True
             data['user_level'] = user.level
             data['user_level_progress'] = user.level_progress
+            print("SUCCESSFULLY ENDED BLOCK")
         else:
             ending_block.delete()
             data['result'] = False
