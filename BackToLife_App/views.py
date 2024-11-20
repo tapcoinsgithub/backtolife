@@ -186,7 +186,8 @@ def start_block(request):
         time_length = request.data['time_length']
         token1 = Token.objects.get(token=token)
         user = User.objects.get(token=token1)
-        Block.objects.create(user=user, time_length=time_length, user_level=user.level)
+        int_time_length = int(time_length)
+        Block.objects.create(user=user, time_length=int_time_length, user_level=user.level)
         data['result'] = True
     except Exception as e:
         print(f"EXCEPTION HERE: {e}")
