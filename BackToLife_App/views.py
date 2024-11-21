@@ -91,6 +91,8 @@ def login_view(request):
             'level': 1,
             'level_progress': 0
         }
+    print("RETURNING DATA HERE:")
+    print(data)
     return Response(data)
 
 @api_view(['GET'])
