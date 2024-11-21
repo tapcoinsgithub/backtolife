@@ -224,6 +224,7 @@ def block_ended(request):
         if ending_block.user_level == user.level:
             print("ENDING USER BLOCK")
             ending_block.completed = True
+            ending_block.save()
             current_max_time = (30 * user.level) * 60
             total_time_to_progress = current_max_time * 5
             block_time_length = ending_block.time_length
