@@ -252,3 +252,20 @@ def block_ended(request):
         data['user_level'] = 0
         data['user_level_progress'] = 0
     return Response(data)
+
+@api_view(['POST'])
+def delete_block_group(request):
+    data = {}
+    try:
+        token = request.data['token']
+        block_group_name = request.data['block_group_name']
+        token1 = Token.objects.get(token=token)
+        user =  User.objects.get(token=token1)
+        deleting_block_group = BlockGroup.objects.filter(user_id=user.token, block_group_name=block_group_name)
+        deleting_block_group.delete()
+        data['response'] = True
+    except Exception as e:
+        print("Something went wrong")
+        print(e)
+        data['response'] = False
+    return Response(data)

@@ -10,4 +10,5 @@ urlpatterns = [
     path("start_block", start_block, name="startBlock"),
     path("stop_block", stop_block, name="stopBlock"),
     path("block_ended", block_ended, name="blockEnded"),
+    path("delete_block_group", delete_block_group, name="deleteBlockGroup")
 ]
