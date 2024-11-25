@@ -258,11 +258,17 @@ def delete_block_group(request):
     data = {}
     try:
         token = request.data['token']
+        print("REQUEST TOKEN")
         block_group_name = request.data['block_group_name']
+        print("BGROUP NAME")
         token1 = Token.objects.get(token=token)
-        user =  User.objects.get(token=token1)
-        deleting_block_group = BlockGroup.objects.filter(user_id=user.token, block_group_name=block_group_name)
+        print("GOT TOKEN OBJECT")
+        user = User.objects.get(token=token1)
+        print("GOT USER")
+        deleting_block_group = BlockGroup.objects.filter(user_id=user.token_id, block_group_name=block_group_name)
+        print("GOT DELETING BLOCK GROUP")
         deleting_block_group.delete()
+        print("DELETE BLOCK GROUP")
         data['response'] = True
     except Exception as e:
         print("Something went wrong")
