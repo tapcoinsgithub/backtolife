@@ -275,3 +275,24 @@ def delete_block_group(request):
         print(e)
         data['response'] = False
     return Response(data)
+
+@api_view(['POST'])
+def edit_block_group(request):
+    data = {}
+    try:
+        token = request.data['token']
+        token1 = Token.objects.get(token=token)
+        user = User.objects.get(token=token1)
+        block_group_name = request.data['block_group_name']
+        old_block_group_name = request.data['old_block_group_name']
+        app_tokens = request.data['app_tokens']
+        editing_block_group = BlockGroup.objects.filter(user_id=user.token_id, block_group_name=old_block_group_name)
+        editing_block_group.block_group_name = block_group_name
+        editing_block_group.app_tokens = app_tokens
+        editing_block_group.save()
+        data['response'] = "Success"
+    except Exception as e:
+        print("Something went wrong")
+        print(e)
+        data['response'] = "Failed to update."
+    return Response(data)
