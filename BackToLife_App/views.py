@@ -286,7 +286,10 @@ def edit_block_group(request):
         block_group_name = request.data['block_group_name']
         old_block_group_name = request.data['old_block_group_name']
         app_tokens = request.data['app_tokens']
-        editing_block_group = BlockGroup.objects.filter(user_id=user.token_id, block_group_name=old_block_group_name)
+        editing_block_groups = BlockGroup.objects.filter(user_id=user.token_id, block_group_name=old_block_group_name)
+        print(editing_block_groups)
+        editing_block_group = editing_block_groups[0]
+        print(editing_block_group)
         editing_block_group.block_group_name = block_group_name
         editing_block_group.app_tokens = app_tokens
         editing_block_group.save()
