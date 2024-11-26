@@ -57,7 +57,7 @@ def login_view(request):
                 if confirm_password == "":
                     print("SHOWING CONFIRM PASSWORD")
                     data["response"] = "Registering"
-                    data['username'] =  "",
+                    data['username'] =  ""
                     data['token'] = ""
                     data['level'] = 1
                     data['level_progress'] = 0
