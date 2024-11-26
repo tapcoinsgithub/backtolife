@@ -69,7 +69,7 @@ def login_view(request):
                         user = serializer.save()
                         if type(user) == str:
                             data["response"] = user
-                            data['username'] =  "",
+                            data['username'] =  ""
                             data['token'] = ""
                             data['level'] = 1
                             data['level_progress'] = 0
