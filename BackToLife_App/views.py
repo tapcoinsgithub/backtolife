@@ -53,35 +53,45 @@ def login_view(request):
                 print("THE TOKEN IS BELOW")
                 print(token)
             else:
-                print("10")
-                serializer = RegistrationSerializer(data=request.data)
-                if serializer.is_valid():
-                    user = serializer.save()
-                    if type(user) == str:
-                        data["response"] = user
-                        data['username'] =  "",
-                        data['token'] = ""
-                        data['level'] = 1
-                        data['level_progress'] = 0
-                        return Response(data)
-                    data['response'] = "Registered"
-                    data['username'] = user.username
-                    token = user.token
-                    data['token'] = token.token
-                    data['level'] = user.level
-                    data['level_progress'] = user.level_progress
-                    user.logged_in = True
-                    user.is_active = True
-                    user.save()
-                    token.save()
-                else: 
-                    data = {
-                        'response': "Something went wrong registering.",
-                        'username': "",
-                        'token': "",
-                        'level': 1,
-                        'level_progress': 0
-                    }
+                confirm_password = request.data['confirm_password']
+                if confirm_password == "":
+                    print("SHOWING CONFIRM PASSWORD")
+                    data["response"] = "Registering"
+                    data['username'] =  "",
+                    data['token'] = ""
+                    data['level'] = 1
+                    data['level_progress'] = 0
+                    return Response(data)
+                else:
+                    print("10")
+                    serializer = RegistrationSerializer(data=request.data)
+                    if serializer.is_valid():
+                        user = serializer.save()
+                        if type(user) == str:
+                            data["response"] = user
+                            data['username'] =  "",
+                            data['token'] = ""
+                            data['level'] = 1
+                            data['level_progress'] = 0
+                            return Response(data)
+                        data['response'] = "Registered"
+                        data['username'] = user.username
+                        token = user.token
+                        data['token'] = token.token
+                        data['level'] = user.level
+                        data['level_progress'] = user.level_progress
+                        user.logged_in = True
+                        user.is_active = True
+                        user.save()
+                        token.save()
+                    else: 
+                        data = {
+                            'response': "Something went wrong registering.",
+                            'username': "",
+                            'token': "",
+                            'level': 1,
+                            'level_progress': 0
+                        }
     except Exception as e:
         print(e)
         data = {

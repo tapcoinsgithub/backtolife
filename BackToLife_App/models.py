@@ -9,6 +9,7 @@ class Token(models.Model):
 
 class User(models.Model):
     username = models.CharField(max_length=config('CHAR', cast=int), unique=True, null=True)
+    password = models.CharField(max_length=config('CHAR', cast=int), unique=False, null=True)
     token = models.OneToOneField(Token, on_delete=models.CASCADE, primary_key=True, null=False)
     level = models.IntegerField(verbose_name="user level", null=True, default=1)
     level_progress = models.IntegerField(verbose_name="user level progress", null=True, default=0)
