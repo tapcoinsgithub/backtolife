@@ -216,8 +216,12 @@ def stop_block(request):
     data = {}
     try:
         token = request.data['token']
+        take_ten_percent = request.data['take_ten_percent']
         token1 = Token.objects.get(token=token)
         user = User.objects.get(token=token1)
+        if take_ten_percent:
+            user.level_progress -= 10
+            user.save()
         stopping_block = Block.objects.get(user=user, completed=False)
         stopping_block.delete()
         data['result'] = True
