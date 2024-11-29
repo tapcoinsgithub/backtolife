@@ -317,3 +317,23 @@ def edit_block_group(request):
         print(e)
         data['response'] = "Failed to update."
     return Response(data)
+
+@api_view(['GET'])
+def get_user_info(request):
+    data = {}
+    try:
+        token = request.GET.get('token', None)
+        token1 = Token.objects.get(token=token)
+        user = User.objects.get(token=token1)
+        data['result'] = True
+        data['username'] = user.username
+        data['user_level'] = user.level
+        data['user_level_progress'] = user.level_progress
+        return Response(data)
+    except Exception as e:
+        print(f"EXCEPTION HERE: {e}")
+        data['result'] = False
+        data['username'] = "None"
+        data['user_level'] = 1
+        data['user_level_progress'] = 0
+        return Response(data)

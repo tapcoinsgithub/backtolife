@@ -11,5 +11,6 @@ urlpatterns = [
     path("stop_block", stop_block, name="stopBlock"),
     path("block_ended", block_ended, name="blockEnded"),
     path("delete_block_group", delete_block_group, name="deleteBlockGroup"),
-    path("edit_block_group", edit_block_group, name="editBlockGroup")
+    path("edit_block_group", edit_block_group, name="editBlockGroup"),
+    path("get_user_info", get_user_info, name="getUserInfo")
 ]
