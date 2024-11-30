@@ -329,6 +329,10 @@ def get_user_info(request):
         data['username'] = user.username
         data['user_level'] = user.level
         data['user_level_progress'] = user.level_progress
+        if user.phone_number != None:
+            data['user_phone_number'] = user.phone_number
+        else:
+            data['user_phone_number'] = "None"
         return Response(data)
     except Exception as e:
         print(f"EXCEPTION HERE: {e}")
@@ -336,4 +340,5 @@ def get_user_info(request):
         data['username'] = "None"
         data['user_level'] = 1
         data['user_level_progress'] = 0
+        data['user_phone_number'] = "None"
         return Response(data)

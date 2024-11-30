@@ -13,6 +13,7 @@ class User(models.Model):
     token = models.OneToOneField(Token, on_delete=models.CASCADE, primary_key=True, null=False)
     level = models.IntegerField(verbose_name="user level", null=True, default=1)
     level_progress = models.IntegerField(verbose_name="user level progress", null=True, default=0)
+    phone_number = models.CharField(max_length=16, null=True, unique=True, default=None)
     logged_in = models.BooleanField(verbose_name="logged in", default=False)
     is_active = models.BooleanField(verbose_name="is active", default=False, null=True)
     last_active_date = models.DateTimeField(verbose_name="last active date", auto_now=True, null=True)
