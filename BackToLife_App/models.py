@@ -14,6 +14,8 @@ class User(models.Model):
     level = models.IntegerField(verbose_name="user level", null=True, default=1)
     level_progress = models.IntegerField(verbose_name="user level progress", null=True, default=0)
     phone_number = models.CharField(max_length=16, null=True, unique=True, default=None)
+    p_code = models.IntegerField(null=True)
+    p_code_time = models.DateTimeField(verbose_name="phone code time added", null=True)
     logged_in = models.BooleanField(verbose_name="logged in", default=False)
     is_active = models.BooleanField(verbose_name="is active", default=False, null=True)
     last_active_date = models.DateTimeField(verbose_name="last active date", auto_now=True, null=True)
@@ -34,3 +36,7 @@ class Block(models.Model):
     user_level = models.IntegerField(verbose_name="users level", null=True, default=1)
     created_at = models.DateTimeField(verbose_name="created at", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="updated at", auto_now=True)
+
+class TextTracker(models.Model):
+    count = models.IntegerField(verbose_name="text count", null=True)
+    active = models.BooleanField(verbose_name="active tracker", default=False)

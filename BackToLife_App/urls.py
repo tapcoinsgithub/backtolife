@@ -12,5 +12,7 @@ urlpatterns = [
     path("block_ended", block_ended, name="blockEnded"),
     path("delete_block_group", delete_block_group, name="deleteBlockGroup"),
     path("edit_block_group", edit_block_group, name="editBlockGroup"),
-    path("get_user_info", get_user_info, name="getUserInfo")
+    path("get_user_info", get_user_info, name="getUserInfo"),
+    path("save_phone_number", save_phone_number, name="savePhoneNumber"),
+    path("confirm_code", confirm_code, name="confirmCode")
 ]

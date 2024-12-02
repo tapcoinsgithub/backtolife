@@ -7,6 +7,10 @@ from decouple import config
 import binascii
 import os
 import json
+from django.utils.timezone import make_aware
+import requests
+from datetime import datetime, timedelta
+from random import randrange
 
 @api_view(['POST'])
 def login_view(request):
@@ -342,3 +346,76 @@ def get_user_info(request):
         data['user_level_progress'] = 0
         data['user_phone_number'] = "None"
         return Response(data)
+    
+@api_view(['POST'])
+def save_phone_number(request):
+    data = {}
+    try:
+        token = request.data['token']
+        _token = Token.objects.get(token=token)
+        user = User.objects.get(token=_token)
+        phone_number = request.data['phone_number']
+        code = ""
+        for i in range(4):
+            num = randrange(10)
+            code += str(num)
+        # Function to send confirmation text
+        right_now = make_aware(datetime.now())
+        try:
+            requests.post('https://textbelt.com/text', {
+                'phone': phone_number,
+                'message': f'Your temporary code is: {code}',
+                'key': config('TEXT_BELT_KEY'),
+            })
+            try:
+                text_tracker = TextTracker.objects.get(active=True)
+                text_tracker.count += 1
+                text_tracker.save()
+            except:
+                text_tracker = TextTracker.objects.create(count=1, active=True)
+            user.p_code = int(code)
+            user.p_code_time = right_now
+            user.save()
+            data['result'] = True
+        except Exception as e:
+            print("88888888888")
+            print("IN EXCEPTION")
+            print(e)
+            data['result'] = False
+    except Exception as e:
+        print(f"Exception here: {e}")
+        data['result'] = False
+    return Response(data)
+
+@api_view(['POST'])
+def confirm_code(request):
+    data = {}
+    try:
+        right_now = make_aware(datetime.now())
+        token = request.data['token']
+        _token = Token.objects.get(token=token)
+        user = User.objects.get(token=_token)
+        code = request.data['code']
+        phone_number = request.data['phone_number']
+        p_code_datetime_limit = user.p_code_time + timedelta(minutes=5)
+        if user.p_code == int(code):
+            print("CODE MATCHES")
+            if p_code_datetime_limit > right_now:
+                print("DATE IS VALID")
+                user.phone_number = phone_number
+                user.p_code = None
+                user.p_code_time = None
+                user.save()
+                data['result'] = True
+                data['response'] = "Successfully saved phone number."
+            else:
+                data['result'] = False
+                data['response'] = "Code time limit reached."
+        else:
+            data['result'] = False
+            data['response'] = "Invalid code."
+    except Exception as e:
+        data['result'] = False
+        data['response'] = "Something went wrong."
+        print(f"Exception here: {e}")
+    return Response(data)
