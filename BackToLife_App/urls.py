@@ -14,5 +14,8 @@ urlpatterns = [
     path("edit_block_group", edit_block_group, name="editBlockGroup"),
     path("get_user_info", get_user_info, name="getUserInfo"),
     path("save_phone_number", save_phone_number, name="savePhoneNumber"),
-    path("confirm_code", confirm_code, name="confirmCode")
+    path("confirm_code", confirm_code, name="confirmCode"),
+    path("send_username", send_username, name="sendUsername"),
+    path("send_code", send_code, name="sendCode"),
+    path("change_password", change_password, name="changePassword")
 ]

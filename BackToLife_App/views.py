@@ -11,6 +11,7 @@ from django.utils.timezone import make_aware
 import requests
 from datetime import datetime, timedelta
 from random import randrange
+import bcrypt
 
 @api_view(['POST'])
 def login_view(request):
@@ -418,4 +419,218 @@ def confirm_code(request):
         data['result'] = False
         data['response'] = "Something went wrong."
         print(f"Exception here: {e}")
+    return Response(data)
+
+@api_view(['POST'])
+def send_username(request):
+    phone_number = request.data['phone_number']
+    data = {
+        "response": True,
+        "message" : ""
+    }
+
+    try:
+        user = User.objects.get(phone_number=phone_number)
+        data['message'] = "BEFORE SEND TEXT"
+        requests.post('https://textbelt.com/text', {
+            'phone': phone_number,
+            'message': f'Your username is: {user.username}',
+            'key': config('TEXT_BELT_KEY'),
+        })
+        try:
+            text_tracker = TextTracker.objects.get(active=True)
+            text_tracker.count += 1
+            text_tracker.save()
+        except:
+            text_tracker = TextTracker.objects.create(count=1, active=True)
+        data['message'] = "RESPONSE IS A SUCCESS"
+    except Exception as e:
+        data['response'] = False
+        data['message'] = f"{e}"
+    
+    return Response(data)
+
+@api_view(['POST'])
+def send_code(request):
+    phone_number = request.data['phone_number']
+    code = ""
+    for i in range(4):
+        num = randrange(10)
+        code += str(num)
+    data = {}
+    right_now = make_aware(datetime.now())
+    try:
+        user = User.objects.get(phone_number=phone_number)
+        requests.post('https://textbelt.com/text', {
+            'phone': phone_number,
+            'message': f'Your temporary code is: {code}',
+            'key': config('TEXT_BELT_KEY'),
+        })
+        try:
+            text_tracker = TextTracker.objects.get(active=True)
+            text_tracker.count += 1
+            text_tracker.save()
+        except:
+            text_tracker = TextTracker.objects.create(count=1, active=True)
+        print(f"USER PCODE BEFORE: {user.p_code}")
+        print(f"CODE TO SAVE: {code}")
+        user.p_code = int(code)
+        user.p_code_time = right_now
+        user.save()
+        data['response'] = True
+    except Exception as e:
+        print("SOMETHING WENT WRONG")
+        print(e)
+        data['response'] = False    
+    print("DATA IS HERE")
+    print(data)
+    return Response(data)
+
+@api_view(['POST'])
+def change_password(request):
+    if request.data['code'] == "SAVE":
+        print("IN SAVED IF STATMENT")
+        data = {
+            "response": True,
+            "message": "",
+            "error_type": 0
+        }
+        try:
+            print("IN THE TRY BLOCK")
+            password = request.data['password']
+            if password.strip() == "":
+                data["response"] = False
+                data["error_type"] = 0
+                data["message"] = "Password can't be blank."
+                return Response(data)
+            print("AFTER CHECKING FOR EMPTY")
+            token = Token.objects.get(token=request.data['token'])
+            user = User.objects.get(token=token)
+            print("GOT USER")
+            newPW = bcrypt.hashpw(password.encode(config('ENCODE')), user.password.encode(config('ENCODE')))
+            print("GOT NEW PW")
+            if newPW == user.password.encode(config('ENCODE')):
+                print("PASSWORD IS PREVIOUS PASSWORD")
+                data["response"] = False
+                data["error_type"] = 1
+                data["message"] = "Password can't be previous password."
+                print(data)
+                return Response(data)
+            print("PASSWORDS ARE DIFFERENT")
+            salt = bcrypt.gensalt(rounds=config('ROUNDS', cast=int))
+            print("GOT THE SALT")
+            hashed = bcrypt.hashpw(password.encode(config('ENCODE')), salt).decode()
+            print("GOT THE HASHED")
+            user.password = hashed
+            print("SET USER PASSWORD")
+            user.is_guest = False
+            print("SET THE GUEST")
+            user.save()
+        except:
+            print("IN EXCEPT BLOCK")
+            data["response"] = False
+            data["error_type"] = 3
+            data["message"] = "Something went wrong."
+        return Response(data)
+    elif request.data['code'] == "Change_Password":
+        print("IN Change_Password IF STATMENT")
+        data = {
+            "response": True,
+            "message": "",
+            "error_type": 0,
+            "expired": False
+        }
+        try:
+            print("IN THE TRY BLOCK")
+            password = request.data['password']
+            if password.strip() == "":
+                data["response"] = False
+                data["error_type"] = 0
+                data["message"] = "Password can't be blank."
+                return Response(data)
+            print("AFTER CHECKING FOR EMPTY")
+            user = User.objects.get(username=request.data['username'])
+            print("GOT USER")
+            newPW = bcrypt.hashpw(password.encode(config('ENCODE')), user.password.encode(config('ENCODE')))
+            print("GOT NEW PW")
+            if newPW == user.password.encode(config('ENCODE')):
+                print("PASSWORD IS PREVIOUS PASSWORD")
+                data["response"] = False
+                data["error_type"] = 1
+                data["message"] = "Password can't be previous password."
+                print(data)
+                return Response(data)
+            print("PASSWORDS ARE DIFFERENT")
+            salt = bcrypt.gensalt(rounds=config('ROUNDS', cast=int))
+            print("GOT THE SALT")
+            hashed = bcrypt.hashpw(password.encode(config('ENCODE')), salt).decode()
+            print("GOT THE HASHED")
+            user.password = hashed
+            print("SET USER PASSWORD")
+            user.is_guest = False
+            print("SET THE GUEST")
+            user.save()
+            data["response"] = True
+            data["error_type"] = 0
+            data["message"] = "Success"
+            data['expired'] = False
+        except:
+            print("IN EXCEPT BLOCK")
+            data["response"] = False
+            data["error_type"] = 3
+            data["message"] = "Something went wrong."
+        print("DATA IS BELOW")
+        print(data)
+        return Response(data)
+    data = {
+        "response": True,
+        "expired": False,
+        "message": "",
+        "error_type": 0
+    }
+    code = request.data['code']
+    password = request.data['password']
+    if password.strip() == "":
+        data["response"] = False
+        data["error_type"] = 0
+        data["message"] = "Password can't be blank."
+        data["expired"] = False
+        return Response(data)
+    user = None
+    try:
+        user = User.objects.get(p_code=int(code))
+    except:
+        data['response'] = False
+        data["error_type"] = 3
+        data['message'] = "Something went wrong."
+        data['expired'] = False
+        return Response(data)
+    newPW = bcrypt.hashpw(password.encode(config('ENCODE')), user.password.encode(config('ENCODE')))
+    if newPW == user.password.encode(config('ENCODE')):
+        data["response"] = False
+        data["error_type"] = 1
+        data["message"] = "Password can't be previous password."
+        data["expired"] = False
+        return Response(data)
+    
+    code_datetime_limit = user.p_code_time + timedelta(minutes=5)
+    right_now = make_aware(datetime.now())
+    try:
+        if code_datetime_limit > right_now:
+            salt = bcrypt.gensalt(rounds=config('ROUNDS', cast=int))
+            hashed = bcrypt.hashpw(password.encode(config('ENCODE')), salt).decode()
+            user.password = hashed
+            user.save()
+            data['message'] = f"Successfully saved password."
+        else:
+            data["response"] = False
+            data['message'] = "Time limit reached. Invalid code."
+            data["error_type"] = 2
+            data['expired'] = True
+    except:
+        data['response'] = False
+        data["error_type"] = 3
+        data['message'] = "Something went wrong."
+        data['expired'] = False
+
     return Response(data)
