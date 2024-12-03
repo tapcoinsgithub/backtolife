@@ -488,51 +488,51 @@ def send_code(request):
 
 @api_view(['POST'])
 def change_password(request):
-    if request.data['code'] == "SAVE":
-        print("IN SAVED IF STATMENT")
-        data = {
-            "response": True,
-            "message": "",
-            "error_type": 0
-        }
-        try:
-            print("IN THE TRY BLOCK")
-            password = request.data['password']
-            if password.strip() == "":
-                data["response"] = False
-                data["error_type"] = 0
-                data["message"] = "Password can't be blank."
-                return Response(data)
-            print("AFTER CHECKING FOR EMPTY")
-            token = Token.objects.get(token=request.data['token'])
-            user = User.objects.get(token=token)
-            print("GOT USER")
-            newPW = bcrypt.hashpw(password.encode(config('ENCODE')), user.password.encode(config('ENCODE')))
-            print("GOT NEW PW")
-            if newPW == user.password.encode(config('ENCODE')):
-                print("PASSWORD IS PREVIOUS PASSWORD")
-                data["response"] = False
-                data["error_type"] = 1
-                data["message"] = "Password can't be previous password."
-                print(data)
-                return Response(data)
-            print("PASSWORDS ARE DIFFERENT")
-            salt = bcrypt.gensalt(rounds=config('ROUNDS', cast=int))
-            print("GOT THE SALT")
-            hashed = bcrypt.hashpw(password.encode(config('ENCODE')), salt).decode()
-            print("GOT THE HASHED")
-            user.password = hashed
-            print("SET USER PASSWORD")
-            user.is_guest = False
-            print("SET THE GUEST")
-            user.save()
-        except:
-            print("IN EXCEPT BLOCK")
-            data["response"] = False
-            data["error_type"] = 3
-            data["message"] = "Something went wrong."
-        return Response(data)
-    elif request.data['code'] == "Change_Password":
+    # if request.data['code'] == "SAVE":
+    #     print("IN SAVED IF STATMENT")
+    #     data = {
+    #         "response": True,
+    #         "message": "",
+    #         "error_type": 0
+    #     }
+    #     try:
+    #         print("IN THE TRY BLOCK")
+    #         password = request.data['password']
+    #         if password.strip() == "":
+    #             data["response"] = False
+    #             data["error_type"] = 0
+    #             data["message"] = "Password can't be blank."
+    #             return Response(data)
+    #         print("AFTER CHECKING FOR EMPTY")
+    #         token = Token.objects.get(token=request.data['token'])
+    #         user = User.objects.get(token=token)
+    #         print("GOT USER")
+    #         newPW = bcrypt.hashpw(password.encode(config('ENCODE')), user.password.encode(config('ENCODE')))
+    #         print("GOT NEW PW")
+    #         if newPW == user.password.encode(config('ENCODE')):
+    #             print("PASSWORD IS PREVIOUS PASSWORD")
+    #             data["response"] = False
+    #             data["error_type"] = 1
+    #             data["message"] = "Password can't be previous password."
+    #             print(data)
+    #             return Response(data)
+    #         print("PASSWORDS ARE DIFFERENT")
+    #         salt = bcrypt.gensalt(rounds=config('ROUNDS', cast=int))
+    #         print("GOT THE SALT")
+    #         hashed = bcrypt.hashpw(password.encode(config('ENCODE')), salt).decode()
+    #         print("GOT THE HASHED")
+    #         user.password = hashed
+    #         print("SET USER PASSWORD")
+    #         user.is_guest = False
+    #         print("SET THE GUEST")
+    #         user.save()
+    #     except:
+    #         print("IN EXCEPT BLOCK")
+    #         data["response"] = False
+    #         data["error_type"] = 3
+    #         data["message"] = "Something went wrong."
+    #     return Response(data)
+    if request.data['code'] == "Change_Password":
         print("IN Change_Password IF STATMENT")
         data = {
             "response": True,
@@ -549,7 +549,9 @@ def change_password(request):
                 data["message"] = "Password can't be blank."
                 return Response(data)
             print("AFTER CHECKING FOR EMPTY")
-            user = User.objects.get(username=request.data['username'])
+            token = request.data['token']
+            _token = Token.objects.get(token=token)
+            user = User.objects.get(token=_token)
             print("GOT USER")
             newPW = bcrypt.hashpw(password.encode(config('ENCODE')), user.password.encode(config('ENCODE')))
             print("GOT NEW PW")
@@ -567,8 +569,6 @@ def change_password(request):
             print("GOT THE HASHED")
             user.password = hashed
             print("SET USER PASSWORD")
-            user.is_guest = False
-            print("SET THE GUEST")
             user.save()
             data["response"] = True
             data["error_type"] = 0
