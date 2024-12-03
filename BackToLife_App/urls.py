@@ -17,5 +17,7 @@ urlpatterns = [
     path("confirm_code", confirm_code, name="confirmCode"),
     path("send_username", send_username, name="sendUsername"),
     path("send_code", send_code, name="sendCode"),
-    path("change_password", change_password, name="changePassword")
+    path("change_password", change_password, name="changePassword"),
+    path("confirm_password", confirm_password, name="confirmPassword"),
+    path("save_username", save_username, name="saveUsername")
 ]

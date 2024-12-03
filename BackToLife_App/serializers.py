@@ -44,27 +44,45 @@ def check_pw_complexity(pw:str):
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=config('CHAR', cast=int))
+    password = serializers.CharField(max_length=config('CHAR', cast=int))
 
     def create(self, validated_data):
+        user1 = None
+        foundUser = False
+        foundPassword = False
         try:
-            print("IN SERIALIZER")
-            user = User.objects.get(username=validated_data['username'])
-            if user:
-                print("RETURNING USER")
-                print(user)
-                return user   
+            for user in User.objects.all():
+                if user.username == validated_data['username']: 
+                    foundUser = True
+                    newPW = bcrypt.hashpw(validated_data['password'].encode(config('ENCODE')), user.password.encode(config('ENCODE')))
+                    if newPW == user.password.encode(config('ENCODE')):
+                        foundPassword = True
+                        user1 = user
+            if foundUser == False:
+                if foundPassword == False:
+                    user1 = {
+                        "error": True,
+                        "user": "Could not find username.",
+                        "password": "Incorrect Password."
+                        }
             else:
-                print("RETURNING FALSE")
-                return False
+                if foundPassword == False:
+                    user1 = {
+                        "error": True,
+                        "user": "None",
+                        "password": "Incorrect Password"
+                    }
+                
         except Exception as e:
-            print("IN EXCEPTION")
             return False
+
+        return user1
         
 class RegistrationSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=config('CHAR', cast=int))
     password = serializers.CharField(max_length=config('CHAR', cast=int))
     confirm_password = serializers.CharField(max_length=config('CHAR', cast=int))
-    
+
     def create(self, validated_data):
         try:
             uName = validated_data.pop("username")

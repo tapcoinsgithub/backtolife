@@ -634,3 +634,57 @@ def change_password(request):
         data['expired'] = False
 
     return Response(data)
+
+@api_view(['POST'])
+def confirm_password(request):
+    data = {}
+    try:
+        token = request.data['token']
+        _token = Token.objects.get(token=token)
+        user = User.objects.get(token=_token)
+        password = request.data['password']
+        serializer_data = {
+            "username" : user.username,
+            "password" : password
+        }
+        serializer = LoginSerializer(data=serializer_data)
+        if serializer.is_valid():
+            print("Login Serializer is valid")
+            print(serializer.is_valid())
+            user = serializer.save()
+            if user:
+                print("GOT THE USER")
+                data['response'] = True
+            else:
+                print("DID NOT GET THE USER")
+                data['response'] = False
+    except Exception as e:
+        print(f"Exception here: {e}")
+        data['response'] = False
+    return Response(data)
+
+@api_view(['POST'])
+def save_username(request):
+    data = {}
+
+    try:
+        token = request.data['token']
+        _token = Token.objects.get(token=token)
+        user = User.objects.get(token=_token)
+        username = request.data['username']
+        try:
+            User.objects.get(username=username)
+            data['response'] = False
+            data['message'] = "Duplicate username."
+            print("GOT USER WITH THE GIVEN USERNAME")
+        except:
+            user.username = username
+            user.save()
+            print("SAVED THE NEW USERNAME")
+            data['response'] = True
+            data['message'] = username
+    except Exception as e:
+        print(f"Exception here: {e}")
+        data['response'] = False
+        data['message'] = "Something went wrong."
+    return Response(data)
