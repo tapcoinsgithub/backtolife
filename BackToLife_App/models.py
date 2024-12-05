@@ -8,7 +8,7 @@ class Token(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class User(models.Model):
-    username = models.CharField(max_length=config('CHAR', cast=int), unique=True, null=True)
+    username = models.CharField(max_length=10, unique=True, null=True)
     password = models.CharField(max_length=config('CHAR', cast=int), unique=False, null=True)
     token = models.OneToOneField(Token, on_delete=models.CASCADE, primary_key=True, null=False)
     level = models.IntegerField(verbose_name="user level", null=True, default=1)
