@@ -225,8 +225,17 @@ def stop_block(request):
         token1 = Token.objects.get(token=token)
         user = User.objects.get(token=token1)
         if take_ten_percent == "0":
-            user.level_progress -= 10
+            tempLevelprogress = user.level_progress
+            if tempLevelprogress - 10 < 0:
+                if user.level > 1:
+                    user.level -= 1
+                    user.level_progress = 100 + (tempLevelprogress - 10)
+                else:
+                    user.level_progress = 0
+            else:
+                user.level_progress -= 10
             user.save()
+        # If user level progress is negative then decrease level and set level progress equal to 100 minus the |negative number| TODO!!!
         stopping_block = Block.objects.get(user=user, completed=False)
         stopping_block.delete()
         data['result'] = True
@@ -257,7 +266,8 @@ def block_ended(request):
             if user.level_progress >= 100:
                 print("PROGRESSING TO NEXT LEVEL")
                 user.level += 1
-                user.level_progress = 0
+                # Adjust user level progress based on if the percent gained goes above 100 percent TODO!!!
+                user.level_progress = user.level_progress - 100
             user.save()
             data['result'] = True
             data['user_level'] = user.level

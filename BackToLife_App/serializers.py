@@ -59,12 +59,11 @@ class LoginSerializer(serializers.Serializer):
                         foundPassword = True
                         user1 = user
             if foundUser == False:
-                if foundPassword == False:
-                    user1 = {
-                        "error": True,
-                        "user": "Could not find username.",
-                        "password": "Incorrect Password."
-                        }
+                user1 = {
+                    "error": True,
+                    "user": "Could not find username.",
+                    "password": "Incorrect Password."
+                    }
             else:
                 if foundPassword == False:
                     user1 = {
