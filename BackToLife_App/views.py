@@ -661,11 +661,13 @@ def confirm_password(request):
         if serializer.is_valid():
             print("Login Serializer is valid")
             print(serializer.is_valid())
-            user = serializer.save()
-            if user:
+            _user = serializer.save()
+            if _user != None:
+                if type(_user) == dict:
+                    print("Is Error")
+                    data['response'] = False
+                    return Response(data)
                 print("GOT THE USER")
-                print(user)
-                print(user.username)
                 data['response'] = True
             else:
                 print("DID NOT GET THE USER")
