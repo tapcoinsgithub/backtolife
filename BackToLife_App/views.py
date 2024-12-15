@@ -664,6 +664,8 @@ def confirm_password(request):
             user = serializer.save()
             if user:
                 print("GOT THE USER")
+                print(user)
+                print(user.username)
                 data['response'] = True
             else:
                 print("DID NOT GET THE USER")
