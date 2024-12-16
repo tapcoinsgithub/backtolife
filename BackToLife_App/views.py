@@ -735,7 +735,7 @@ def get_current_block_time(request):
             # Subtract right_now from time_pass_check to see if that gives the correct amount of min/hours left in block
             # return the answer to the frontend to start the time again from that time.
             # send back the time length of the block for the initial timer count
-            data['currentTime'] = str(int(time_difference_in_seconds))
+            data['currentTime'] = int(time_difference_in_seconds)
             data['initialTime'] = block_time_length
         else:
             print("BLOCK ENDED HERE")
