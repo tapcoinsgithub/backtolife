@@ -710,7 +710,7 @@ def get_current_block_time(request):
     data = {
         "result": True,
         "isBlocking": True,
-        "blockEnded": True,
+        "blockEnded": False,
         "currentTime": 0,
         "initialTime": 0
     }
