@@ -710,7 +710,8 @@ def get_current_block_time(request):
     data = {
         "result": True,
         "isBlocking": True,
-        "currentTime": "Current Time",
+        "blockEnded": True,
+        "currentTime": 0,
         "initialTime": 0
     }
     try:
@@ -740,7 +741,7 @@ def get_current_block_time(request):
             print("BLOCK ENDED HERE")
             # has run out of time
             # Send string back saying that block has ended to call end_block function
-            data['currentTime'] = "Block Ended"
+            data['blockEnded'] = True
         return Response(data)
     except Block.DoesNotExist:
         print("BLOCK DOES NOT EXIST EXCEPTION")
