@@ -720,7 +720,10 @@ def get_current_block_time(request):
         print(f"CHECK BLOCK IS HERE: {check_block}")
         right_now = make_aware(datetime.now())
         block_time_length = check_block.time_length
+        print(f"BLOCK TIME LENGTH HERE: {block_time_length}")
         time_passed_check = check_block.created_at + timedelta(minutes=block_time_length)
+        print(f"TIME PASSED CHECKED HERE: {time_passed_check}")
+        print(f"RIGHT NOW HERE: {right_now}")
         if time_passed_check > right_now:
             # hasnt run out of time yet
             time_difference = time_passed_check - right_now
