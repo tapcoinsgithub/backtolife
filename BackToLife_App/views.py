@@ -12,6 +12,7 @@ import requests
 from datetime import datetime, timedelta
 from random import randrange
 import bcrypt
+from django.core.exceptions import ObjectDoesNotExist
 
 @api_view(['POST'])
 def login_view(request):
@@ -731,11 +732,12 @@ def get_current_block_time(request):
             # Send string back saying that block has ended to call end_block function
             data['currentTime'] = "Block Ended"
         return Response(data)
+    except Block.DoesNotExist:
+        print("BLOCK DOES NOT EXIST EXCEPTION")
+        data['isBlocking'] = False
+        return Response(data)
     except Exception as e:
         print(f"EXCEPTION IS HERE: {e}")
-        if e == "Block matching query does not exist.":
-            data['isBlocking'] = False
-        else:
-            data['isBlocking'] = False
-            data['result'] = False
+        data['isBlocking'] = False
+        data['result'] = False
         return Response(data)
