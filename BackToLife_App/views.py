@@ -254,6 +254,7 @@ def block_ended(request):
         ending_block = Block.objects.get(user=user, completed=False)
         if ending_block.user_level == user.level:
             print("ENDING USER BLOCK")
+            # do a check here in the future to make sure that the time for the block has actually ended.
             ending_block.completed = True
             ending_block.save()
             current_max_time = (30 * user.level) * 60
@@ -716,8 +717,25 @@ def get_current_block_time(request):
         user = User.objects.get(token=token1)
         check_block = Block.objects.get(user=user, completed=False)
         print(f"CHECK BLOCK IS HERE: {check_block}")
+        right_now = make_aware(datetime.now())
+        block_time_length = check_block.time_length
+        time_passed_check = check_block.created_at + timedelta(minutes=block_time_length)
+        if time_passed_check > right_now:
+            # hasnt run out of time yet
+            time_difference = time_passed_check - right_now
+            print(f"TIME DIFF HERE: {time_difference}")
+            # Subtract right_now from time_pass_check to see if that gives the correct amount of min/hours left in block
+            # return the answer to the frontend to start the time again from that time.
+        else:
+            # has run out of time
+            # Send string back saying that block has ended to call end_block function
+            data['currentTime'] = "Block Ended"
         return Response(data)
     except Exception as e:
         print(f"EXCEPTION IS HERE: {e}")
-        data['isBlocking'] = False
+        if e == "Block matching query does not exist.":
+            data['isBlocking'] = False
+        else:
+            data['isBlocking'] = False
+            data['result'] = False
         return Response(data)
