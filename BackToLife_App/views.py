@@ -721,7 +721,7 @@ def get_current_block_time(request):
         right_now = make_aware(datetime.now())
         block_time_length = check_block.time_length
         print(f"BLOCK TIME LENGTH HERE: {block_time_length}")
-        time_passed_check = check_block.created_at + timedelta(minutes=block_time_length)
+        time_passed_check = check_block.created_at + timedelta(seconds=block_time_length)
         print(f"TIME PASSED CHECKED HERE: {time_passed_check}")
         print(f"RIGHT NOW HERE: {right_now}")
         if time_passed_check > right_now:
@@ -731,6 +731,7 @@ def get_current_block_time(request):
             # Subtract right_now from time_pass_check to see if that gives the correct amount of min/hours left in block
             # return the answer to the frontend to start the time again from that time.
         else:
+            print("BLOCK ENDED HERE")
             # has run out of time
             # Send string back saying that block has ended to call end_block function
             data['currentTime'] = "Block Ended"
