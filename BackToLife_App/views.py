@@ -727,9 +727,12 @@ def get_current_block_time(request):
         if time_passed_check > right_now:
             # hasnt run out of time yet
             time_difference = time_passed_check - right_now
+            time_difference_in_seconds = time_difference.total_seconds()
             print(f"TIME DIFF HERE: {time_difference}")
+            print(f"TIME DIFF IN SECONDS HERE: {time_difference_in_seconds}")
             # Subtract right_now from time_pass_check to see if that gives the correct amount of min/hours left in block
             # return the answer to the frontend to start the time again from that time.
+            # send back the time length of the block for the initial timer count
         else:
             print("BLOCK ENDED HERE")
             # has run out of time
