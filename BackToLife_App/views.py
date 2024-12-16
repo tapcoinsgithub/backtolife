@@ -702,3 +702,22 @@ def save_username(request):
         data['response'] = False
         data['message'] = "Something went wrong."
     return Response(data)
+
+@api_view(['GET'])
+def get_current_block_time(request):
+    data = {
+        "result": True,
+        "isBlocking": True,
+        "currentTime": "Current Time"
+    }
+    try:
+        token = request.GET.get('token', None)
+        token1 = Token.objects.get(token=token)
+        user = User.objects.get(token=token1)
+        check_block = Block.objects.get(user=user, completed=False)
+        print(f"CHECK BLOCK IS HERE: {check_block}")
+        return Response(data)
+    except Exception as e:
+        print(f"EXCEPTION IS HERE: {e}")
+        data['isBlocking'] = False
+        return Response(data)

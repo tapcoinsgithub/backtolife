@@ -19,5 +19,6 @@ urlpatterns = [
     path("send_code", send_code, name="sendCode"),
     path("change_password", change_password, name="changePassword"),
     path("confirm_password", confirm_password, name="confirmPassword"),
-    path("save_username", save_username, name="saveUsername")
+    path("save_username", save_username, name="saveUsername"),
+    path("get_current_block_time", get_current_block_time, name="getCurrentBlockTime")
 ]
