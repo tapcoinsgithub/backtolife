@@ -749,6 +749,5 @@ def get_current_block_time(request):
         return Response(data)
     except Exception as e:
         print(f"EXCEPTION IS HERE: {e}")
-        data['isBlocking'] = False
         data['result'] = False
         return Response(data)
