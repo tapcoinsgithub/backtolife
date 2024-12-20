@@ -87,37 +87,27 @@ class RegistrationSerializer(serializers.Serializer):
             uName = validated_data.pop("username")
             pw = validated_data.pop("password")
             cpw = validated_data.pop("confirm_password")
-            print("VALIDATED DATA USERNAME")
-            print(uName)
             if len(uName) <=1 or uName is None:
                 return "Username must be greater than two characters long."
             for char in uName:
                 if char == " ":
                     return "Username cannot have any spaces."
-            print("11")
             result = check_pw_complexity(pw)
             if result != "Complexity Passed.":
                 return result
             if pw != cpw:
                 return "Passwords must match."
-            print("PASSWORD COMPLEXITY PASSED")
             salt = bcrypt.gensalt(rounds=config('ROUNDS', cast=int))
             hashed = bcrypt.hashpw(pw.encode(config('ENCODE')), salt).decode()
             token = binascii.hexlify(os.urandom(config('TOKEN', cast=int))).decode()
-            print("12")
             token1 = Token.objects.create(token=token)
-            print("13")
             try:
                 user = User.objects.create(token=token1, username=uName, password=hashed)
-                print("CREATED USER BELOW")
-                print(user)
             except Exception as e:
-                print("IS AN ERROR IN SERIALIZER")
                 newError = str(e)
                 newErr = newError.split("DETAIL:")[1]
                 error = newErr.split("=")[1]
                 return error
-            print("RETURNING THE USER NOW")
             return user
         except:
             return "Something went wrong."
