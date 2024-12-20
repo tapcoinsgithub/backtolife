@@ -213,6 +213,7 @@ def stop_block(request):
 
 @api_view(['POST'])
 def block_ended(request):
+    print("IN BLOCK ENDED CALL")
     data = {}
     try:
         token = request.data['token']
@@ -229,9 +230,11 @@ def block_ended(request):
             progress_gained = total_time_to_progress/block_time_length
             percent_gained = 100 / progress_gained
             if block_locked_status:
+                print("DOUBLED PERCENT GAINED")
                 double_pg = percent_gained * 2
                 user.level_progress += double_pg
             else:
+                print("NORMAL BLOCK")
                 user.level_progress += percent_gained
             if user.level_progress >= 100:
                 user.level += 1
@@ -241,11 +244,13 @@ def block_ended(request):
             data['user_level'] = user.level
             data['user_level_progress'] = user.level_progress
         else:
+            print("IN ELSE BLOCK")
             ending_block.delete()
             data['result'] = False
             data['user_level'] = user.level
             data['user_level_progress'] = user.level_progress
     except Exception as e:
+        print(f"EXCEPTION HERE: {e}")
         data['result'] = False
         data['user_level'] = 0
         data['user_level_progress'] = 0
