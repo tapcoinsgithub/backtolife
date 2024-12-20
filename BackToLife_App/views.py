@@ -241,19 +241,19 @@ def block_ended(request):
                 user.level_progress = user.level_progress - 100
             user.save()
             data['result'] = True
-            data['user_level'] = user.level
-            data['user_level_progress'] = user.level_progress
+            # data['user_level'] = user.level
+            # data['user_level_progress'] = user.level_progress
         else:
             print("IN ELSE BLOCK")
             ending_block.delete()
             data['result'] = False
-            data['user_level'] = user.level
-            data['user_level_progress'] = user.level_progress
+            # data['user_level'] = user.level
+            # data['user_level_progress'] = user.level_progress
     except Exception as e:
         print(f"EXCEPTION HERE: {e}")
         data['result'] = False
-        data['user_level'] = 0
-        data['user_level_progress'] = 0
+        # data['user_level'] = 0
+        # data['user_level_progress'] = 0
     return Response(data)
 
 @api_view(['POST'])
